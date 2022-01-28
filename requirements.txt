@@ -1,3 +1,5 @@
 requests
-opencv-python
 pyTelegramBotAPI
+pysqlite3
+pyzbar
+pillow
