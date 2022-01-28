@@ -1,9 +1,13 @@
-import cv2
+import os
+
+import pyzbar.pyzbar as pz
+import PIL
+
+import db
 
 
-detector = cv2.QRCodeDetector()
-
-img = cv2.imread('images/1.jpg')
-
-qr_data = detector.detectAndDecode(img)[0]
-
+def scan(user_id, image):
+    receipt = pz.decode(PIL.Image.open(image))
+    print(receipt[0][0])
+    os.remove(image)
+    # db.add_receipt(user_id, receipt)
