@@ -1,3 +1,5 @@
+from aiogram import types
+
 import telebot
 
 import settings
@@ -27,8 +29,10 @@ def handle_photo(message):
     
     products = scanner.scan(user_id, src)
     if type(products) == list:
+        text = ''
         for product in products:
-            bot.send_message(user_id, product)
+            text += f'{product}\n\n'
+        bot.send_message(user_id, text, parse_mode=types.ParseMode.HTML)
     elif products == '0':
         bot.send_message(user_id, 'Ошибка. Получить данные по этому чеку невозможно')
     elif products == '1':
