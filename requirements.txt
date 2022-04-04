@@ -3,3 +3,4 @@ pyTelegramBotAPI
 pysqlite3
 pyzbar
 pillow
+aiogram
