@@ -22,7 +22,7 @@ def add_receipt(user_id, receipt):
         'id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,' +
         'receipt TEXT NOT NULL,' +
         'user_id INTEGER NOT NULL,' +
-        'FOREIGN KEY (user_id) REFERENCES users(id)'
+        'FOREIGN KEY (user_id) REFERENCES users(id)' +
         ')')
     connect.commit()
     cursor.execute(f"SELECT receipt FROM receipts WHERE receipt = '{receipt}'")
