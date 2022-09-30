@@ -1,12 +1,15 @@
 import re
 
 import settings
-# import bot
 
+
+# Создание словаря данных для отправки по api
 def create_data(receipt):
+    # Получение нужно части информации из QR-кода
     receipt = re.sub('[tsfnip=]', '', receipt)
     receipt = receipt.split('&')
 
+    # Формирование словаря
     data = {
         'fn': receipt[2],
         'fd': receipt[3],
