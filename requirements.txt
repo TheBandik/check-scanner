@@ -1,6 +1,8 @@
 requests
 pyTelegramBotAPI
-pysqlite3
+PyMySQL
 pyzbar
 pillow
 aiogram
+fuzzywuzzy
+python-Levenshtein
