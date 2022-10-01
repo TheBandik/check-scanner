@@ -1,18 +1,27 @@
-import sqlite3
+import pymysql
+
+import settings
 
 
 # Подключение к БД
-connect = sqlite3.connect('products.db', check_same_thread=False)
-cursor = connect.cursor()
+db = pymysql.connect(
+    host=settings.host,
+    port=settings.port,
+    user=settings.user,
+    password=settings.password,
+    db=settings.db,
+    charset=settings.charset
+)
+cursor = db.cursor()
 
 # Добавление пользователя
 def add_user(user_id):
     # Создание таблицы пользователей, если её нет
     cursor.execute('CREATE TABLE IF NOT EXISTS users(' +
-        'id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,' +
+        'id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,' +
         'tel_id INTEGER NOT NULL' +
         ')')
-    connect.commit()
+    db.commit()
 
     # Проверка на налачие пользователя в БД
     cursor.execute(f'SELECT tel_id FROM users WHERE tel_id = {user_id}')
@@ -20,18 +29,21 @@ def add_user(user_id):
     # Если пользователя нет, то он добавляется в БД
     if data is None:
         cursor.execute(f'INSERT INTO users(tel_id) VALUES({user_id})')
-        connect.commit()
+        db.commit()
 
 # Добавление чека
-def add_receipt(user_id, receipt):
+def add_receipt(tel_id, receipt):
     # Создание таблицы чеков, если её нет
     cursor.execute('CREATE TABLE IF NOT EXISTS receipts(' +
-        'id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,' +
+        'id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,' +
         'receipt TEXT NOT NULL,' +
         'user_id INTEGER NOT NULL,' +
-        'FOREIGN KEY (user_id) REFERENCES users(id)' +
+        'FOREIGN KEY (user_id) REFERENCES users (id)' +
         ')')
-    connect.commit()
+    db.commit()
+
+    cursor.execute(f"SELECT id FROM users WHERE tel_id = {tel_id}")
+    user_id = cursor.fetchone()[0]
 
     # Проверка на налачие чека в БД
     cursor.execute(f"SELECT receipt FROM receipts WHERE receipt = '{receipt}'")
@@ -39,4 +51,4 @@ def add_receipt(user_id, receipt):
     # Если чека нет, то он добавляется в БД
     if data is None:
         cursor.execute(f"INSERT INTO receipts(receipt, user_id) VALUES('{receipt}', {user_id})")
-        connect.commit()
+        db.commit()
