@@ -5,6 +5,7 @@ import telebot
 import settings
 import scanner
 import db
+import categorization
 
 
 # Подключение к боту по токену
@@ -33,7 +34,7 @@ def handle_photo(message):
         # Сохранение изображения
         with open(src, 'wb') as f:
             f.write(downloaded_file)
-        bot.reply_to(message, 'Изображение получено')
+        bot.reply_to(message, 'Изображение получено, ожидайте получение чека...')
     except Exception as e:
         bot.reply_to(message, e)
     
@@ -45,11 +46,14 @@ def handle_photo(message):
         text = ''
         for product in products:
             text += f'{product}\n\n'
+            # Определение категории товара
+            categorization.category_detection(product)
         bot.send_message(user_id, text, parse_mode=aiogram.types.ParseMode.HTML)
     elif products == '0':
         bot.send_message(user_id, 'Ошибка. Получить данные по этому чеку невозможно')
     elif products == '1':
         bot.send_message(user_id, 'Распознать QR-код не удалось, попробуйте еще раз')
+
 
 # Дебаг
 print('bot is working')
