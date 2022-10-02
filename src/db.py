@@ -42,6 +42,7 @@ def add_receipt(tel_id, receipt):
         ')')
     db.commit()
 
+    # Получение user_id
     cursor.execute(f"SELECT id FROM users WHERE tel_id = {tel_id}")
     user_id = cursor.fetchone()[0]
 
@@ -52,3 +53,11 @@ def add_receipt(tel_id, receipt):
     if data is None:
         cursor.execute(f"INSERT INTO receipts(receipt, user_id) VALUES('{receipt}', {user_id})")
         db.commit()
+
+# Получение списка категорий
+def get_categories():
+    # Получение списка категорий нижнего уровня
+    cursor.execute('select id, name, tags from categories where tags is not null')
+    categories = cursor.fetchall()
+    
+    return categories
