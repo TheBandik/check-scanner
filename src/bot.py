@@ -10,6 +10,7 @@ import categorization
 
 # Подключение к боту по токену
 bot = telebot.TeleBot(settings.bot_token)
+db.create_db()
 
 # Команда start
 @bot.message_handler(commands=['start'])
