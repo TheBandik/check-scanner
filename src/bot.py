@@ -5,7 +5,6 @@ import telebot
 import settings
 import scanner
 import db
-import categorization
 
 
 # Подключение к боту по токену
@@ -47,8 +46,6 @@ def handle_photo(message):
         text = ''
         for product in products:
             text += f'{product}\n\n'
-            # Определение категории товара
-            categorization.category_detection(product)
         bot.send_message(user_id, text, parse_mode=aiogram.types.ParseMode.HTML)
     elif products == '0':
         bot.send_message(user_id, 'Ошибка. Получить данные по этому чеку невозможно')

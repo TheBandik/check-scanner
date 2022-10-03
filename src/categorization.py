@@ -19,4 +19,4 @@ def category_detection(product):
 
         probs.append(max(prob1, prob2, prob3, prob4, prob5))
 
-    print(categories[probs.index(max(probs))][0], categories[probs.index(max(probs))][1])
+    return categories[probs.index(max(probs))][0]

@@ -1,4 +1,5 @@
 import os
+from numpy import rec
 
 import pyzbar.pyzbar as pz
 import PIL
@@ -6,23 +7,37 @@ import requests
 
 import db
 import parser
+import categorization
 
 
 # Сканирование QR-кода
 def scan(user_id, image):
     # Распознование QR-кода
-    receipt = pz.decode(PIL.Image.open(image))
+    qr = pz.decode(PIL.Image.open(image))
     # Удаление локального изображения
     os.remove(image)
-    if receipt:
-        # Добавление чека в БД
-        db.add_receipt(user_id, receipt[0][0].decode("utf-8"))
+    if qr:
         # Получение словаря данных из QR-кода для отправки по api
-        data = parser.create_data(receipt[0][0].decode("utf-8"))
+        data = parser.create_data(qr[0][0].decode("utf-8"))
         # Получение чека из ФНС
         receipt = requests.post(f'https://proverkacheka.com/api/v1/check/get', data=data).json()
         products = []
         try:
+            # Добавление магазина в БД
+            db.add_store(receipt['data']['json']['retailPlace'], receipt['data']['json']['retailPlaceAddress'])
+            # Добавление чека в БД
+            db.add_receipt(user_id, qr[0][0].decode("utf-8"), receipt['data']['json']['retailPlace'], receipt['data']['json']['dateTime'])
+
+            for item in receipt['data']['json']['items']:
+                # Добавление имени товара
+                db.add_product_name(item['name'])
+
+                # Определение категории товара
+                category = categorization.category_detection(item['name'])
+                # Добавление товара
+                db.add_product(item['name'], qr[0][0].decode("utf-8"), int(item['sum']) / 100, item['quantity'], item['nds'], int(item['ndsSum']) / 100, int(item['price']) / 100, category)
+
+
             # Формирование списка товаров для отправки пользователю
             # products.append(f"{receipt['data']['json']['retailPlace']}")
             for item in receipt['data']['json']['items']:
