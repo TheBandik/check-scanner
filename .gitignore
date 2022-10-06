@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 *.db
+src/settings.py
