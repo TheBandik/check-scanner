@@ -1,14 +1,35 @@
 import os
-from numpy import rec
+import re
+import asyncio
 
 import pyzbar.pyzbar as pz
 import PIL
 import requests
 
 import db
-import parser
+import settings
 import categorization
 
+
+# Создание словаря данных для отправки по api
+def create_data(receipt):
+    # Получение нужно части информации из QR-кода
+    receipt = re.sub('[tsfnip=]', '', receipt)
+    receipt = receipt.split('&')
+
+    # Формирование словаря
+    data = {
+        'fn': receipt[2],
+        'fd': receipt[3],
+        'fp': receipt[4],
+        't': receipt[0],
+        'n': receipt[5],
+        's': receipt[1],
+        'qr': '1',
+        'token': settings.api_token
+    }
+    
+    return data
 
 # Сканирование QR-кода
 def scan(user_id, image):
@@ -18,24 +39,24 @@ def scan(user_id, image):
     os.remove(image)
     if qr:
         # Получение словаря данных из QR-кода для отправки по api
-        data = parser.create_data(qr[0][0].decode("utf-8"))
+        data = create_data(qr[0][0].decode("utf-8"))
         # Получение чека из ФНС
         receipt = requests.post(f'https://proverkacheka.com/api/v1/check/get', data=data).json()
         products = []
+        # Добавление магазина в БД
+        asyncio.run(db.DataBase.add_store(receipt['data']['json']['retailPlace'], receipt['data']['json']['retailPlaceAddress']))
+        # Добавление чека в БД
+        asyncio.run(db.DataBase.add_receipt(user_id, qr[0][0].decode("utf-8"), receipt['data']['json']['retailPlace'], receipt['data']['json']['dateTime']))
+
+        for item in receipt['data']['json']['items']:
+            # Добавление имени товара
+            asyncio.run(db.DataBase.add_product_name(item['name']))
+
+            # Определение категории товара
+            category = categorization.category_detection(item['name'])
+            # Добавление товара
+            asyncio.run(db.DataBase.add_product(item['name'], qr[0][0].decode("utf-8"), int(item['sum']) / 100, item['quantity'], item['nds'], int(item['ndsSum']) / 100, int(item['price']) / 100, category))
         try:
-            # Добавление магазина в БД
-            db.add_store(receipt['data']['json']['retailPlace'], receipt['data']['json']['retailPlaceAddress'])
-            # Добавление чека в БД
-            db.add_receipt(user_id, qr[0][0].decode("utf-8"), receipt['data']['json']['retailPlace'], receipt['data']['json']['dateTime'])
-
-            for item in receipt['data']['json']['items']:
-                # Добавление имени товара
-                db.add_product_name(item['name'])
-
-                # Определение категории товара
-                category = categorization.category_detection(item['name'])
-                # Добавление товара
-                db.add_product(item['name'], qr[0][0].decode("utf-8"), int(item['sum']) / 100, item['quantity'], item['nds'], int(item['ndsSum']) / 100, int(item['price']) / 100, category)
 
 
             # Формирование списка товаров для отправки пользователю

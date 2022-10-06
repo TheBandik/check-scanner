@@ -1,3 +1,5 @@
+import asyncio
+
 from fuzzywuzzy import fuzz
 
 import db
@@ -6,7 +8,7 @@ import db
 # Определение категории товара
 def category_detection(product):
     # Получение категорий из БД
-    categories = db.get_categories()
+    categories = asyncio.run(db.DataBase.get_categories())
 
     # Определение категории на основе нечёткого поиска 5 способами
     probs = []
@@ -20,3 +22,5 @@ def category_detection(product):
         probs.append(max(prob1, prob2, prob3, prob4, prob5))
 
     return categories[probs.index(max(probs))][0]
+
+categories = asyncio.run(db.DataBase.get_categories())

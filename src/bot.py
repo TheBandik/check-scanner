@@ -1,4 +1,6 @@
 import aiogram
+import asyncio
+import time
 
 import telebot
 
@@ -9,7 +11,6 @@ import db
 
 # Подключение к боту по токену
 bot = telebot.TeleBot(settings.bot_token)
-db.create_db()
 
 # Команда start
 @bot.message_handler(commands=['start'])
@@ -17,7 +18,7 @@ def start(message):
     # Получение id пользователя
     user_id = message.chat.id
     # Добавление id пользователя в базу
-    db.add_user(user_id)
+    asyncio.run(db.DataBase.add_user(user_id))
 
 # Получение изображения
 @bot.message_handler(content_types=['photo'])
