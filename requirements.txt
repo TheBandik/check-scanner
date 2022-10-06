@@ -1,8 +1,10 @@
 requests
 pyTelegramBotAPI
-PyMySQL
+aiomysql
 pyzbar
 pillow
 aiogram
 fuzzywuzzy
 python-Levenshtein
+pytest-asyncio
+pytest
