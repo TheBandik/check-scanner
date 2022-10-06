@@ -22,16 +22,28 @@ class DataBase():
         return True
 
     @classmethod
-    async def add_user(self, user_id):
+    async def add_user(self, user_id, bot):
         ''' Добавление пользователя в базу данных '''
         await self.connection()
         # Проверка на налачие пользователя в БД
         await self.cursor.execute(f'SELECT telegram_id FROM users WHERE telegram_id = {user_id}')
         data = await self.cursor.fetchone()
+
         # Если пользователя нет, то он добавляется в БД
         if data is None:
             await self.cursor.execute(f'INSERT INTO users(telegram_id) VALUES({user_id})')
             await self.db.commit()
+
+        # Получение telegram_id админов
+        await self.cursor.execute(f'SELECT telegram_id FROM users WHERE role = 1')
+        admins = await self.cursor.fetchall()
+
+        # Получение информации о новом пользователе
+        new_user_info = bot.get_chat_member(data, data).user
+
+        # Отправка админам информации о появлении нового пользователя
+        for admin in admins:
+            bot.send_message(admin[0], f'У бота появился новый пользователь!\n\nid = {new_user_info.id}\nName = {new_user_info.first_name}\nUsername = {new_user_info.username}')
         
         await self.cursor.close()
         self.db.close()

@@ -17,7 +17,7 @@ def start(message):
     # Получение id пользователя
     user_id = message.chat.id
     # Добавление id пользователя в базу
-    asyncio.run(db.DataBase.add_user(user_id))
+    asyncio.run(db.DataBase.add_user(user_id, bot))
 
 # Получение изображения
 @bot.message_handler(content_types=['photo'])

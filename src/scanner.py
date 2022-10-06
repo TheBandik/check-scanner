@@ -42,7 +42,6 @@ def scan(user_id, image, bot):
         data = create_data(qr[0][0].decode("utf-8"))
         # Получение чека из ФНС
         receipt = requests.post(f'https://proverkacheka.com/api/v1/check/get', data=data).json()
-        print(receipt)
         if len(receipt.keys()) > 2:
             bot.send_message(user_id, 'Чек получен, ожидайте распределение товаров по категориям...')
             products = []
