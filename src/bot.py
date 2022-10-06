@@ -1,6 +1,5 @@
 import aiogram
 import asyncio
-import time
 
 import telebot
 
@@ -40,13 +39,15 @@ def handle_photo(message):
         bot.reply_to(message, e)
     
     # Запуск сканирования QR-кода
-    products = scanner.scan(user_id, src)
+    products = scanner.scan(user_id, src, bot)
+    
     # Проверка списка товаров
     if type(products) == list:
         # Формирование и отправка сообщения со списком товаров
         text = ''
         for product in products:
             text += f'{product}\n\n'
+        bot.send_message(user_id, 'Товары распределены по категориям')
         bot.send_message(user_id, text, parse_mode=aiogram.types.ParseMode.HTML)
     elif products == '0':
         bot.send_message(user_id, 'Ошибка. Получить данные по этому чеку невозможно')

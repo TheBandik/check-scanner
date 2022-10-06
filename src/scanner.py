@@ -32,7 +32,7 @@ def create_data(receipt):
     return data
 
 # Сканирование QR-кода
-def scan(user_id, image):
+def scan(user_id, image, bot):
     # Распознование QR-кода
     qr = pz.decode(PIL.Image.open(image))
     # Удаление локального изображения
@@ -42,22 +42,25 @@ def scan(user_id, image):
         data = create_data(qr[0][0].decode("utf-8"))
         # Получение чека из ФНС
         receipt = requests.post(f'https://proverkacheka.com/api/v1/check/get', data=data).json()
-        products = []
-        # Добавление магазина в БД
-        asyncio.run(db.DataBase.add_store(receipt['data']['json']['retailPlace'], receipt['data']['json']['retailPlaceAddress']))
-        # Добавление чека в БД
-        asyncio.run(db.DataBase.add_receipt(user_id, qr[0][0].decode("utf-8"), receipt['data']['json']['retailPlace'], receipt['data']['json']['dateTime']))
+        print(receipt)
+        if len(receipt.keys()) > 2:
+            bot.send_message(user_id, 'Чек получен, ожидайте распределение товаров по категориям...')
+            products = []
+            # Добавление магазина в БД
+            asyncio.run(db.DataBase.add_store(receipt['data']['json']['retailPlace'], receipt['data']['json']['retailPlaceAddress']))
+            # Добавление чека в БД
+            asyncio.run(db.DataBase.add_receipt(user_id, qr[0][0].decode("utf-8"), receipt['data']['json']['retailPlace'], receipt['data']['json']['dateTime']))
 
-        for item in receipt['data']['json']['items']:
-            # Добавление имени товара
-            asyncio.run(db.DataBase.add_product_name(item['name']))
 
-            # Определение категории товара
-            category = categorization.category_detection(item['name'])
-            # Добавление товара
-            asyncio.run(db.DataBase.add_product(item['name'], qr[0][0].decode("utf-8"), int(item['sum']) / 100, item['quantity'], item['nds'], int(item['ndsSum']) / 100, int(item['price']) / 100, category))
-        try:
+            for item in receipt['data']['json']['items']:
+                # Добавление имени товара
+                asyncio.run(db.DataBase.add_product_name(item['name']))
 
+                # Определение категории товара
+                category = categorization.category_detection(item['name'])
+                # Добавление товара
+                asyncio.run(db.DataBase.add_product(item['name'], qr[0][0].decode("utf-8"), int(item['sum']) / 100, item['quantity'], item['nds'], int(item['ndsSum']) / 100, int(item['price']) / 100, category))
+        
 
             # Формирование списка товаров для отправки пользователю
             # products.append(f"{receipt['data']['json']['retailPlace']}")
@@ -67,7 +70,7 @@ def scan(user_id, image):
             # products.append(f"{divider}\n<b>Итого: {int(receipt['data']['json']['totalSum']) / 100} ₽\nНДС: {int(receipt['data']['json']['nds10']) / 100} ₽ (10%) / {int(receipt['data']['json']['nds18']) / 100} ₽ (20%)\nИтого НДС: {int(receipt['data']['json']['nds10']) / 100 + int(receipt['data']['json']['nds18']) / 100} ₽</b>")
 
             return products
-        except:
+        else:
             return '0'
     else:
         return '1'
