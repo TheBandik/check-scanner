@@ -234,6 +234,19 @@ class DataBase():
 
         return categories
 
+    @classmethod
+    async def get_users(self):
+        ''' Получение списка пользователей '''
+        await self.connection()
+        # Получение списка пользователей
+        await self.cursor.execute('select telegram_id, role from users')
+        users = await self.cursor.fetchall()
+
+        await self.cursor.close()
+        self.db.close()
+
+        return users
+
     # def create_db():
     #     # Создание таблицы пользователей, если её нет
     #     cursor.execute('CREATE TABLE IF NOT EXISTS users(' +

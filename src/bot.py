@@ -11,6 +11,12 @@ import db
 # Подключение к боту по токену
 bot = telebot.TeleBot(settings.bot_token)
 
+# Отправка рассылки
+def send_notify(msg, users):
+    # Рассылка сообщения всем пользователям
+    for user in users:
+        bot.send_message(user[0], msg.text)
+
 # Команда start
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -28,6 +34,20 @@ def about(message):
     version = 'pre-alpha'
     # Отправка сообщения пользователю
     bot.send_message(user_id, f'К разработке бота приложили лапки: @thebandik\n@ellismi\n\nТекущая версия: {version}')
+
+# Команда notify (знают о ней только админы)
+@bot.message_handler(commands=['notify'])
+def notify(message):
+    # Получение id пользователя
+    user_id = message.chat.id
+    # Получение id всех пользователей
+    users = asyncio.run(db.DataBase.get_users())
+    if (user_id, 1) in users:
+        # Получение сообщения для рассылки
+        msg = bot.send_message(user_id, 'Отправьте в чат текст для рассылки')
+        bot.register_next_step_handler(msg, send_notify, users)
+    else:
+        bot.send_message(user_id, 'Команда доступна только администраторам')
 
 # Получение изображения
 @bot.message_handler(content_types=['photo'])
