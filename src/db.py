@@ -1,3 +1,5 @@
+''' Модуль для работы с БД'''
+
 import aiomysql
 
 import settings

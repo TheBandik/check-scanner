@@ -1,3 +1,5 @@
+''' Модуль по работе с ботом '''
+
 import aiogram
 import asyncio
 
@@ -11,8 +13,8 @@ import db
 # Подключение к боту по токену
 bot = telebot.TeleBot(settings.bot_token)
 
-# Отправка рассылки
 def send_notify(msg, users, user_id):
+    ''' Отправка массовой рассылки пользователям '''
     # Рассылка сообщения всем пользователям
     if msg.text == '0':
         bot.send_message(user_id, 'Рассылка отменена')
@@ -20,17 +22,17 @@ def send_notify(msg, users, user_id):
         for user in users:
             bot.send_message(user[0], msg.text)
 
-# Команда start
 @bot.message_handler(commands=['start'])
 def start(message):
+    ''' Действия при вводе команды start '''
     # Получение id пользователя
     user_id = message.chat.id
     # Добавление id пользователя в базу
     asyncio.run(db.DataBase.add_user(user_id, bot))
 
-# Команда about
 @bot.message_handler(commands=['about'])
 def about(message):
+    ''' Действия при вводе команды about '''
     # Получение id пользователя
     user_id = message.chat.id
     # Текущая версия
@@ -38,9 +40,9 @@ def about(message):
     # Отправка сообщения пользователю
     bot.send_message(user_id, f'К разработке бота приложили лапки: @thebandik\n@ellismi\n\nТекущая версия: {version}')
 
-# Команда notify (знают о ней только админы)
 @bot.message_handler(commands=['notify'])
 def notify(message):
+    ''' Действия при вводе команды notify. Эта команда доступна только администраторам '''
     # Получение id пользователя
     user_id = message.chat.id
     # Получение id всех пользователей
@@ -52,9 +54,9 @@ def notify(message):
     else:
         bot.send_message(user_id, 'Команда доступна только администраторам')
 
-# Получение изображения
 @bot.message_handler(content_types=['photo'])
 def handle_photo(message):
+    ''' Действия при получении изображения от пользователя '''
     # Получение id пользователя
     user_id = message.chat.id
     try:

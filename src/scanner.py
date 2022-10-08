@@ -1,3 +1,5 @@
+''' Модуль отвечающий за сканирования QR-кода, получение чека из ФНС и внесения полученных данных в БД '''
+
 import os
 import re
 import asyncio
@@ -11,8 +13,8 @@ import settings
 import categorization
 
 
-# Создание словаря данных для отправки по api
 def create_data(receipt):
+    ''' Создание словаря данных для отправки по api '''
     # Получение нужно части информации из QR-кода
     receipt = re.sub('[tsfnip=]', '', receipt)
     receipt = receipt.split('&')
@@ -31,8 +33,8 @@ def create_data(receipt):
     
     return data
 
-# Сканирование QR-кода
 def scan(user_id, image, bot):
+    ''' Сканирование QR-кода '''
     # Распознование QR-кода
     qr = pz.decode(PIL.Image.open(image))
     # Удаление локального изображения
