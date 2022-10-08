@@ -12,10 +12,13 @@ import db
 bot = telebot.TeleBot(settings.bot_token)
 
 # Отправка рассылки
-def send_notify(msg, users):
+def send_notify(msg, users, user_id):
     # Рассылка сообщения всем пользователям
-    for user in users:
-        bot.send_message(user[0], msg.text)
+    if msg.text == '0':
+        bot.send_message(user_id, 'Рассылка отменена')
+    else:
+        for user in users:
+            bot.send_message(user[0], msg.text)
 
 # Команда start
 @bot.message_handler(commands=['start'])
@@ -44,8 +47,8 @@ def notify(message):
     users = asyncio.run(db.DataBase.get_users())
     if (user_id, 1) in users:
         # Получение сообщения для рассылки
-        msg = bot.send_message(user_id, 'Отправьте в чат текст для рассылки')
-        bot.register_next_step_handler(msg, send_notify, users)
+        msg = bot.send_message(user_id, 'Отправьте в чат текст для рассылки. Для отмены отправьте цифру 0')
+        bot.register_next_step_handler(msg, send_notify, users, user_id)
     else:
         bot.send_message(user_id, 'Команда доступна только администраторам')
 
