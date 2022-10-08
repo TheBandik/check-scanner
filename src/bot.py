@@ -19,6 +19,16 @@ def start(message):
     # Добавление id пользователя в базу
     asyncio.run(db.DataBase.add_user(user_id, bot))
 
+# Команда about
+@bot.message_handler(commands=['about'])
+def about(message):
+    # Получение id пользователя
+    user_id = message.chat.id
+    # Текущая версия
+    version = 'pre-alpha'
+    # Отправка сообщения пользователю
+    bot.send_message(user_id, f'К разработке бота приложили лапки: @thebandik\n@ellismi\n\nТекущая версия: {version}')
+
 # Получение изображения
 @bot.message_handler(content_types=['photo'])
 def handle_photo(message):
