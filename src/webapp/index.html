@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="format-detection" content="telephone=no" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="MobileOptimized" content="176" />
@@ -180,117 +181,208 @@
         small {
             font-size: 12px;
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            overflow-y: hidden;
+        }
+
+        .slider {
+            font-family: sans-serif;
+            scroll-snap-type: x mandatory;
+            display: flex;
+            -webkit-overflow-scrolling: auto;
+            overflow-x: scroll;
+        }
+
+        section {
+            border-right: 1px solid black;
+            padding: 1rem;
+            min-width: 95vw;
+            height: 400px;
+            scroll-snap-align: start;
+            text-align: center;
+            position: relative;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .red {
+            background-color: red;
+        }
+
+        .green {
+            background-color: green;
+        }
+
+        .blue {
+            background-color: blue;
+        }
+
+        .yellow {
+            background-color: yellow;
+        }
+
+        .orange {
+            background-color: orange;
+        }
+
+        .sphere {
+            height: 200px;
+            width: 200px;
+            border-radius: 50%;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 500%;
+            position: relative;
+            display: inline-block;
+            margin: 5%;
+        }
+
     </style>
 </head>
 
 <body>
 
-<section>
-    <h1 id="greeting"></h1>
+    <section>
+        <h1 id="greeting"></h1>
 
-    <!-- <div id="buttons"> -->
+        <!-- <div id="buttons"> -->
         <!-- <button onclick="webviewExpand();">Expand Webview</button> -->
         <!-- <small>(The window goes fullscreen)</small> -->
         <!-- <button onclick="toggleMainButton(this);">Hide Main Button</button> -->
         <!-- <small>(It hides/shows main button)</small> -->
         <!-- <button id="btnTime" onclick="sendTime(10);">Send time</button> -->
         <!-- <small>(The bot will recieve a message with filled <code>web_app_data</code> field)</small> -->
-    <!-- </div> -->
+        <!-- </div> -->
 
-    <table class="one-third">
-        <tr>
-            <td>
-                <button>test1</button>
-            </td>
-            <td>
-                <button>test2</button>
-            </td>
-            <td>
-                <button>test3</button>
-            </td>
-          </tr>
-    </table>
+        <table class="one-third">
+            <tr>
+                <td>
+                    <button>test1</button>
+                </td>
+                <td>
+                    <button>test2</button>
+                </td>
+                <td>
+                    <button>test3</button>
+                </td>
+            </tr>
+        </table>
 
-</section>
+        <h1>test</h1>
+        <div class="slider">
+            <section>
+                <h1>Section One</h1>
+                <div class="sphere red"></div>
+            </section>
+            <section>
+                <h1>Section Two</h1>
+                <div class="sphere green"></div>
+            </section>
+            <section>
+                <h1>Section Three</h1>
+                <div class="sphere blue"></div>
+            </section>
+            <section>
+                <h1>Section Four</h1>
+                <div class="sphere yellow"></div>
+            </section>
+            <section>
+                <h1>Section Five</h1>
+                <div class="sphere orange"></div>
+            </section>
+        </div>
 
-<script type="application/javascript">
-    Telegram.WebApp.ready();
+    </section>
 
-    const initData = Telegram.WebApp.initData || '';
-    const initDataUnsafe = Telegram.WebApp.initDataUnsafe || {};
+    <script type="application/javascript">
 
-    document.querySelector('#greeting').innerHTML = `Hi, ${initDataUnsafe.user.first_name}!`;
-    document.querySelector('#initData').innerHTML = JSON.stringify(initData, null, 2);
-    document.querySelector('#initDataUnsafe').innerHTML = JSON.stringify(initDataUnsafe, null, 2);
-    document.querySelector('#themeData').html(JSON.stringify(Telegram.WebApp.themeParams, null, 2));
+        Telegram.WebApp.ready();
 
-    Telegram.WebApp.MainButton
-        .setText('CLOSE WEBVIEW')
-        .show()
-        .onClick(function(){ webviewClose(); });
+        const initData = Telegram.WebApp.initData || '';
+        const initDataUnsafe = Telegram.WebApp.initDataUnsafe || {};
 
-    Telegram.WebApp.onEvent('themeChanged', function() {
-        document.querySelector('#themeData').innerHTML = JSON.stringify(Telegram.WebApp.themeParams, null, 2);
-    });
+        document.querySelector('#greeting').innerHTML = `Hi, ${initDataUnsafe.user.first_name}!`;
+        document.querySelector('#initData').innerHTML = JSON.stringify(initData, null, 2);
+        document.querySelector('#initDataUnsafe').innerHTML = JSON.stringify(initDataUnsafe, null, 2);
+        document.querySelector('#themeData').html(JSON.stringify(Telegram.WebApp.themeParams, null, 2));
 
-    function toggleMainButton(el) {
-        const mainButton = Telegram.WebApp.MainButton;
-        if (mainButton.isVisible) {
-            mainButton.hide();
-            el.innerHTML = 'Show Main Button';
-        } else {
-            mainButton.show();
-            el.innerHTML = 'Hide Main Button';
+
+        Telegram.WebApp.MainButton
+            .setText('CLOSE WEBVIEW')
+            .show()
+            .onClick(function () { webviewClose(); });
+
+        Telegram.WebApp.onEvent('themeChanged', function () {
+            document.querySelector('#themeData').innerHTML = JSON.stringify(Telegram.WebApp.themeParams, null, 2);
+        });
+
+        function toggleMainButton(el) {
+            const mainButton = Telegram.WebApp.MainButton;
+            if (mainButton.isVisible) {
+                mainButton.hide();
+                el.innerHTML = 'Show Main Button';
+            } else {
+                mainButton.show();
+                el.innerHTML = 'Hide Main Button';
+            }
         }
-    }
 
-    function webviewExpand() {
-        Telegram.WebApp.expand();
-    }
-
-    function webviewClose() {
-        Telegram.WebApp.close();
-    }
-
-    function sendTime(spam) {
-        const repeat = spam ? 10 : 1;
-        for (let i = 0; i < repeat; i++) {
-            Telegram.WebApp.sendData(new Date().toString());
-        }
-    }
-
-    function requestLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                document.querySelector('#locationData').innerHTML = '(' + position.coords.latitude + ', ' + position.coords.longitude + ')';
-            });
-        } else {
-            document.querySelector('#locationData').innerHTML = '(Geolocation is not supported in this browser)';
+        function webviewExpand() {
+            Telegram.WebApp.expand();
         }
 
-        return false;
-    }
-
-    function requestVideo() {
-        if (navigator.mediaDevices) {
-            navigator.mediaDevices.getUserMedia({ audio: false, video: true }).then(function(stream) {
-                document.querySelector('#videoData').innerHTML = '(Access granted)';
-            });
-        } else {
-            document.querySelector('#videoData').innerHTML = '(Media devices is not supported in this browser)';
+        function webviewClose() {
+            Telegram.WebApp.close();
         }
-        return false;
-    }
 
-    function requestAudio() {
-        if (navigator.mediaDevices) {
-            navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(function(stream) {
-                document.querySelector('#audioData').innerHTML = '(Access granted)';
-            });
-        } else {
-            document.querySelector('#audioData').innerHTML = '(Media devices is not supported in this browser)';
+        function sendTime(spam) {
+            const repeat = spam ? 10 : 1;
+            for (let i = 0; i < repeat; i++) {
+                Telegram.WebApp.sendData(new Date().toString());
+            }
         }
-        return false;
-    }
-</script>
+
+        function requestLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    document.querySelector('#locationData').innerHTML = '(' + position.coords.latitude + ', ' + position.coords.longitude + ')';
+                });
+            } else {
+                document.querySelector('#locationData').innerHTML = '(Geolocation is not supported in this browser)';
+            }
+
+            return false;
+        }
+
+        function requestVideo() {
+            if (navigator.mediaDevices) {
+                navigator.mediaDevices.getUserMedia({ audio: false, video: true }).then(function (stream) {
+                    document.querySelector('#videoData').innerHTML = '(Access granted)';
+                });
+            } else {
+                document.querySelector('#videoData').innerHTML = '(Media devices is not supported in this browser)';
+            }
+            return false;
+        }
+
+        function requestAudio() {
+            if (navigator.mediaDevices) {
+                navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(function (stream) {
+                    document.querySelector('#audioData').innerHTML = '(Access granted)';
+                });
+            } else {
+                document.querySelector('#audioData').innerHTML = '(Media devices is not supported in this browser)';
+            }
+            return false;
+        }
+    </script>
 </body>
