@@ -42,8 +42,8 @@ function sendTime(spam) {
         Telegram.WebApp.sendData(new Date().toString());
     }
 }
-function test(text) {
-    Telegram.WebApp.sendData(text);
+function test() {
+    Telegram.WebApp.sendData("test");
 }
 function requestLocation() {
     if (navigator.geolocation) {
