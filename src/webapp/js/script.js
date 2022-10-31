@@ -75,3 +75,10 @@ function requestAudio() {
     }
     return false;
 }
+
+let tg = window.Telegram.WebApp;
+
+Telegram.WebApp.onEvent('mainButtonClicked', function(){
+	tg.sendData("some string that we need to send"); 
+	//при клике на основную кнопку отправляем данные в строковом виде
+});
