@@ -26,9 +26,9 @@
         <!-- <button onclick="toggleMainButton(this);">Hide Main Button</button> -->
         <!-- <small>(It hides/shows main button)</small> -->
         <script>
-        function test() {
-            Telegram.WebApp.sendData("test");
-        }
+            function test() {
+                Telegram.WebApp.sendData("test");
+            }
         </script>
         <button id="test" onclick="test();">test</button>
         <!-- <small>(The bot will recieve a message with filled <code>web_app_data</code> field)</small> -->
@@ -51,12 +51,12 @@
         <div class="slider">
             <section>
                 <div class="titlecat"">
-                    <i class="arrow left"></i>
+                    <i class=" arrow left"></i>
                 </div>
                 <div class="titlecat"">
                     <h1>test text</h1>
                 </div>
-                <div class="titlecat"">
+                <div class=" titlecat"">
                     <i class="arrow right"></i>
                 </div>
                 <canvas id="myChart" width="400" height="400"></canvas>
@@ -108,5 +108,11 @@
                 }]
             }
         });
+
+        let tg = window.Telegram.WebApp;
+
+        tg.expand();
+
+        tg.MainButton.text = "Text";
     </script>
 </body>
