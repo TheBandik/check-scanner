@@ -2,7 +2,6 @@
 
 import os
 import re
-import asyncio
 
 import pyzbar.pyzbar as pz
 import PIL
@@ -48,19 +47,19 @@ def scan(user_id, image, bot):
             bot.send_message(user_id, 'Чек получен, ожидайте распределение товаров по категориям...')
             products = []
             # Добавление магазина в БД
-            asyncio.run(db.DataBase.add_store(receipt['data']['json']['retailPlace'], receipt['data']['json']['retailPlaceAddress']))
+            db.DataBase.add_store(receipt['data']['json']['retailPlace'], receipt['data']['json']['retailPlaceAddress'])
             # Добавление чека в БД
-            asyncio.run(db.DataBase.add_receipt(user_id, qr[0][0].decode("utf-8"), receipt['data']['json']['retailPlace'], receipt['data']['json']['dateTime']))
+            db.DataBase.add_receipt(user_id, qr[0][0].decode("utf-8"), receipt['data']['json']['retailPlace'], receipt['data']['json']['dateTime'])
 
 
             for item in receipt['data']['json']['items']:
                 # Добавление имени товара
-                asyncio.run(db.DataBase.add_product_name(item['name']))
+                db.DataBase.add_product_name(item['name'])
 
                 # Определение категории товара
-                category = categorization.category_detection(item['name'])
+                # category = categorization.category_detection(item['name'])
                 # Добавление товара
-                asyncio.run(db.DataBase.add_product(item['name'], qr[0][0].decode("utf-8"), int(item['sum']) / 100, item['quantity'], item['nds'], int(item['ndsSum']) / 100, int(item['price']) / 100, category))
+                db.DataBase.add_product(item['name'], qr[0][0].decode("utf-8"), int(item['sum']) / 100, item['quantity'], item['nds'], int(item['ndsSum']) / 100, int(item['price']) / 100, 1)
         
 
             # Формирование списка товаров для отправки пользователю

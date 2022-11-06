@@ -1,7 +1,6 @@
 ''' Модуль по работе с ботом '''
 
 import aiogram
-import asyncio
 
 import telebot
 
@@ -12,6 +11,9 @@ import db
 
 # Подключение к боту по токену
 bot = telebot.TeleBot(settings.bot_token)
+
+db.DataBase.create_db()
+db.DataBase.make_categories()
 
 def send_notify(msg, users, user_id):
     ''' Отправка массовой рассылки пользователям '''
@@ -28,7 +30,7 @@ def start(message):
     # Получение id пользователя
     user_id = message.chat.id
     # Добавление id пользователя в базу
-    asyncio.run(db.DataBase.add_user(user_id, bot))
+    db.DataBase.add_user(user_id, bot)
 
 @bot.message_handler(commands=['about'])
 def about(message):
@@ -46,7 +48,7 @@ def notify(message):
     # Получение id пользователя
     user_id = message.chat.id
     # Получение id всех пользователей
-    users = asyncio.run(db.DataBase.get_users())
+    users = db.DataBase.get_users()
     if (user_id, 1) in users:
         # Получение сообщения для рассылки
         msg = bot.send_message(user_id, 'Отправьте в чат текст для рассылки. Для отмены отправьте цифру 0')
